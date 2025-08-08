@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   AllCommunityModule,
+  ColDef,
   colorSchemeDark,
   iconSetMaterial,
   ModuleRegistry,
@@ -15,7 +16,7 @@ import {
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const PokeImageRenderer = (props: { value: { front_default: any } }) => {
+const PokeImageRenderer = (props: { value: { front_default: string } }) => {
   const { front_default } = props.value;
   return (
     front_default && (
@@ -31,10 +32,10 @@ const PokeImageRenderer = (props: { value: { front_default: any } }) => {
 };
 
 export const PokemonByType = ({ type }: { type: string }) => {
-  const { data, error, isLoading } = useGetPokemonByTypeQuery(type);
+  const { data, isLoading } = useGetPokemonByTypeQuery(type);
   // const { data, error, isLoading } = useGetPokemonsDetailQuery(type);
 
-  const [columnDefs, setColumnDefs] = useState<any>([
+  const [columnDefs] = useState<ColDef[]>([
     { field: "id" },
     { field: "name" },
     {
@@ -50,7 +51,7 @@ export const PokemonByType = ({ type }: { type: string }) => {
     },
   ]);
 
-  const [rowData, setRowData] = useState<PokemonCompleteInfo[]>([]);
+  const [_, setRowData] = useState<PokemonCompleteInfo[]>([]);
 
   const defaultColDef = useMemo(() => {
     return {

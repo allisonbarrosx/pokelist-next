@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PokemonTypes } from "./components/PokemonTypes";
 
 export default function Home() {
