@@ -19,7 +19,15 @@ export const PokemonByType = ({ type }: { type: string }) => {
               <div>{pokemon.id}</div>
               <div>{pokemon.name}</div>
               <div>
-                <Image src={pokemon.sprites.front_default} alt={pokemon.name} />
+                {pokemon.sprites.front_default && (
+                  <Image
+                    src={pokemon.sprites.front_default}
+                    alt={pokemon.name}
+                    width={80}
+                    height={80}
+                    quality={20}
+                  />
+                )}
               </div>
             </div>
           ))}
