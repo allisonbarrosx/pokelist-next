@@ -37,7 +37,7 @@ export default function RootLayout({
       <LoadingBar />
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
         >
           {children}
         </body>
