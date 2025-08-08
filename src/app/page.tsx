@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PokemonTypes } from "./components/PokemonTypes";
 
 export default function Home() {
@@ -6,7 +7,7 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <PokemonTypes />
         <div className="p-4">
-          <a href="/types">Types?</a>
+          <Link href="/types">Types?</Link>
         </div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">

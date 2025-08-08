@@ -1,5 +1,6 @@
-import { useGetPokemonsDetailQuery } from "@/lib/features/pokemon/pokemonDetailsSlice";
+// import { useGetPokemonsDetailQuery } from "@/lib/features/pokemon/pokemonDetailsSlice";
 import { useGetPokemonByTypeQuery } from "@/lib/features/pokemon/pokemonSlice";
+import Image from "next/image";
 
 export const PokemonByType = ({ type }: { type: string }) => {
   const { data, error, isLoading } = useGetPokemonByTypeQuery(type);
@@ -18,7 +19,7 @@ export const PokemonByType = ({ type }: { type: string }) => {
               <div>{pokemon.id}</div>
               <div>{pokemon.name}</div>
               <div>
-                <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+                <Image src={pokemon.sprites.front_default} alt={pokemon.name} />
               </div>
             </div>
           ))}

@@ -3,7 +3,7 @@ export const revalidate = 240; // Cache this route for 60 seconds
 import { TypeListPokemons } from "@/lib/features/pokemon/pokemon.model";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import pLimit from "p-limit";
+// import pLimit from "p-limit";
 
 const baseUrl = "https://pokeapi.co/api/v2/";
 

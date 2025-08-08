@@ -3,7 +3,7 @@ import { useGetPokemonTypesQuery } from "@/lib/features/pokemon/pokemonSlice";
 import Link from "next/link";
 
 export const PokemonTypes = () => {
-  const { data, error, isLoading } = useGetPokemonTypesQuery();
+  const { data, isLoading } = useGetPokemonTypesQuery();
 
   return (
     <>

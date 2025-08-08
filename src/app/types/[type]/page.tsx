@@ -1,6 +1,7 @@
 "use client";
 import { use } from "react";
 import { PokemonByType } from "../../components/PokemonByType";
+import Link from "next/link";
 
 interface Props {
   params: Promise<{ type: string }>;
@@ -12,7 +13,7 @@ export default function TypesPage({ params }: Props) {
   return (
     <div>
       <p>TYPESS</p>
-      <a href="/">Home</a>
+      <Link href="/">Home</Link>
       <div className="m-5">
         <PokemonByType type={type} />
       </div>
