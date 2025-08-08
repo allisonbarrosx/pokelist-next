@@ -18,20 +18,25 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 const StackedPokemonRenderer = (props: { data: PokemonCompleteInfo }) => {
   const { name, id, sprites } = props.data || {};
   return (
-    <div className="flex justify-center items-center gap-2">
-      {sprites?.front_default && (
-        <Image
-          src={sprites.front_default}
-          alt={`${name} image`}
-          width={64}
-          height={64}
-          quality={40}
-        />
-      )}
-      <div className="flex flex-col gap-2 justify-start">
-        <strong>
-          #{id} <span className="capitalize">{name}</span>
-        </strong>
+    <div className="flex items-center justify-center gap-2">
+      <div className="flex justify-start gap-2">
+        {sprites?.front_default && (
+          <Image
+            src={sprites.front_default}
+            alt={`${name} image`}
+            width={64}
+            height={64}
+            quality={40}
+          />
+        )}
+        <div
+          className="flex flex-col gap-2"
+          style={{ minWidth: "150px", maxWidth: "150px" }}
+        >
+          <strong className="text-wrap">
+            #{id} <span className="capitalize">{name}</span>
+          </strong>
+        </div>
       </div>
     </div>
   );
@@ -53,7 +58,8 @@ export const PokemonByType = ({ type }: { type: string }) => {
     if (isMobile) {
       return [
         {
-          headerName: "",
+          headerName: "Pokémon",
+          headerClass: "text-center",
           flex: 1,
           autoHeight: true,
           cellRenderer: StackedPokemonRenderer,
@@ -89,8 +95,8 @@ export const PokemonByType = ({ type }: { type: string }) => {
     return {
       flex: 1,
       minWidth: 100,
-      resizable: !isMobile,
-      sortable: !isMobile,
+      resizable: true,
+      sortable: true,
     };
   }, [isMobile]);
 
@@ -98,11 +104,12 @@ export const PokemonByType = ({ type }: { type: string }) => {
     .withPart(iconSetMaterial)
     .withPart(colorSchemeDark)
     .withParams({
-      rowHeight: isMobile ? "auto" : "80px",
+      rowHeight: "80px",
       spacing: ".25rem",
       rowHoverColor: "rgba(187, 136, 255, 1)",
       backgroundColor: "transparent",
-      headerHeight: isMobile ? 0 : "5rem",
+      // headerHeight: isMobile ? 0 : "5rem",
+      headerHeight: "5rem",
       headerTextColor: "white",
       headerBackgroundColor: "transparent",
       headerCellHoverBackgroundColor: "rgba(80, 40, 140, 0.66)",
@@ -120,7 +127,7 @@ export const PokemonByType = ({ type }: { type: string }) => {
         loading={isLoading}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
-        pagination={!isMobile}
+        pagination={true}
         paginationPageSize={10}
         paginationPageSizeSelector={[5, 10, 20, 30, 50]}
       />

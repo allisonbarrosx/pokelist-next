@@ -47,6 +47,11 @@ body {
   background-size: 200% auto;
 }
 
+.ag-header-cell.text-center {
+  .ag-header-cell-label {
+    justify-content: center;
+  }
+}
 
 
 @keyframes animatedTextGradient {
