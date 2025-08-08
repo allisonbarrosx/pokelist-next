@@ -7,6 +7,7 @@ import {
 import { counterSlice } from "./features/counter/counterSlice";
 import { counterAsyncSlice } from "./features/counter/counterAsyncSlice";
 import { pokemonApiSlice } from "./features/pokemon/pokemonSlice";
+import { pokemonDetailsApiSlice } from "./features/pokemon/pokemonDetailsSlice";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -14,7 +15,8 @@ import { pokemonApiSlice } from "./features/pokemon/pokemonSlice";
 const rootReducer = combineSlices(
   counterSlice,
   counterAsyncSlice,
-  pokemonApiSlice
+  pokemonApiSlice,
+  pokemonDetailsApiSlice
 );
 
 // Infer the `RootState` type from the root reducer
@@ -31,7 +33,9 @@ export const makeStore = () => {
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) => {
       // return getDefaultMiddleware().concat(quotesApiSlice.middleware);
-      return getDefaultMiddleware().concat(pokemonApiSlice.middleware);
+      return getDefaultMiddleware()
+        .concat(pokemonApiSlice.middleware)
+        .concat(pokemonDetailsApiSlice.middleware);
     },
   });
 };

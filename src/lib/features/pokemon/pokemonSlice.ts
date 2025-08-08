@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
+  PokemonCompleteInfo,
   PokemonType,
   PokemonTypeResult,
   TypeListPokemons,
@@ -30,8 +31,44 @@ export const pokemonApiSlice = createApi({
           : [{ type: "TypesList", id: "LIST" }];
       },
     }),
-    getPokemonByType: builder.query<TypeListPokemons, string>({
-      query: (type: string) => `type/${type}`,
+    getPokemonByType: builder.query<PokemonCompleteInfo[], string>({
+      async queryFn(type, _queryApi, _extraOptions, baseQuery) {
+        const allPokemonsByTypeList = await baseQuery(`type/${type}`);
+        if (allPokemonsByTypeList.error)
+          return { error: allPokemonsByTypeList.error };
+
+        const pokemons = (allPokemonsByTypeList.data as TypeListPokemons)
+          .pokemon;
+
+        const allPokemonsByTypeCompleteList = await Promise.all(
+          pokemons.map(async ({ pokemon }) => {
+            const allPokemonInfoResult = await baseQuery(
+              `pokemon/${pokemon.name}`
+            );
+            if (allPokemonInfoResult.error) return null;
+
+            const allPokemonInfo =
+              allPokemonInfoResult.data as PokemonCompleteInfo;
+
+            return { ...allPokemonInfo, type };
+          })
+        );
+
+        return {
+          data: allPokemonsByTypeCompleteList.filter(
+            Boolean
+          ) as PokemonCompleteInfo[],
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "PokemonsByType" as const,
+                id,
+              })),
+            ]
+          : ["PokemonsByType"],
     }),
   }),
 });
@@ -40,3 +77,7 @@ export const pokemonApiSlice = createApi({
 // Same as `pokemonSlice.endpoints.getPokemonTypes.useQuery`
 export const { useGetPokemonTypesQuery, useGetPokemonByTypeQuery } =
   pokemonApiSlice;
+
+/**
+ * this is an example of managing API calls with RTK Query
+ */
