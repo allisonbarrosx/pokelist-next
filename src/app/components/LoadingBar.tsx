@@ -1,11 +1,23 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
+
+type RTKQueryStatus = "uninitialized" | "pending" | "fulfilled" | "rejected";
+
+interface QueryState {
+  status: RTKQueryStatus;
+  // add other props if needed
+}
+
+interface MutationState {
+  status: RTKQueryStatus;
+  // add other props if needed
+}
 
 NProgress.configure({
   showSpinner: false,
@@ -37,12 +49,12 @@ export function LoadingBar() {
   // Detect RTK Query loading state globally
   const isLoading = useSelector((state: RootState) => {
     const queriesLoading = [
-      ...Object.values(state.pokemonApi?.queries ?? {}),
-      ...Object.values(state.pokemonDetailApi?.queries ?? {}),
-    ].some((q: any) => q.status === "pending");
-    const mutationsLoading = Object.values(
-      state.pokemonApi?.mutations ?? {}
-    ).some((m: any) => m.status === "pending");
+      ...(Object.values(state.pokemonApi?.queries ?? {}) as QueryState[]),
+      ...(Object.values(state.pokemonDetailApi?.queries ?? {}) as QueryState[]),
+    ].some((q) => q.status === "pending");
+    const mutationsLoading = [
+      ...(Object.values(state.pokemonApi?.mutations ?? {}) as MutationState[]),
+    ].some((m) => m.status === "pending");
     return queriesLoading || mutationsLoading;
   });
 
