@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "./StoreProvider";
+import { LoadingBar } from "./components/LoadingBar";
 // import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 
 // ModuleRegistry.registerModules([AllCommunityModule]);
@@ -33,6 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <StoreProvider>
+      <LoadingBar />
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
