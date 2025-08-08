@@ -4,11 +4,18 @@ import {
   ThunkAction,
   combineSlices,
 } from "@reduxjs/toolkit";
+import { counterSlice } from "./features/counter/counterSlice";
+import { counterAsyncSlice } from "./features/counter/counterAsyncSlice";
+import { pokemonApiSlice } from "./features/pokemon/pokemonSlice";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
 // const rootReducer = combineSlices(counterSlice, quotesApiSlice);
-const rootReducer = combineSlices();
+const rootReducer = combineSlices(
+  counterSlice,
+  counterAsyncSlice,
+  pokemonApiSlice
+);
 
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
@@ -24,7 +31,7 @@ export const makeStore = () => {
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) => {
       // return getDefaultMiddleware().concat(quotesApiSlice.middleware);
-      return getDefaultMiddleware();
+      return getDefaultMiddleware().concat(pokemonApiSlice.middleware);
     },
   });
 };
