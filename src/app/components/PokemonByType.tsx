@@ -1,4 +1,3 @@
-// import { useGetPokemonsDetailQuery } from "@/lib/features/pokemon/pokemonDetailsSlice";
 import { PokemonCompleteInfo } from "@/lib/features/pokemon/pokemon.model";
 import { useGetPokemonByTypeQuery } from "@/lib/features/pokemon/pokemonSlice";
 import { AgGridReact } from "ag-grid-react";
@@ -16,107 +15,115 @@ import {
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const PokeImageRenderer = (props: { value: { front_default: string } }) => {
-  const { front_default } = props.value;
+const StackedPokemonRenderer = (props: { data: PokemonCompleteInfo }) => {
+  const { name, id, sprites } = props.data || {};
   return (
-    front_default && (
-      <Image
-        src={front_default}
-        alt={`Poke Image`}
-        width={80}
-        height={80}
-        quality={20}
-      />
-    )
+    <div className="flex justify-center items-center gap-2">
+      {sprites?.front_default && (
+        <Image
+          src={sprites.front_default}
+          alt={`${name} image`}
+          width={64}
+          height={64}
+          quality={40}
+        />
+      )}
+      <div className="flex flex-col gap-2 justify-start">
+        <strong>
+          #{id} <span className="capitalize">{name}</span>
+        </strong>
+      </div>
+    </div>
   );
 };
 
 export const PokemonByType = ({ type }: { type: string }) => {
   const { data, isLoading } = useGetPokemonByTypeQuery(type);
-  // const { data, error, isLoading } = useGetPokemonsDetailQuery(type);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const [columnDefs] = useState<ColDef[]>([
-    { field: "id" },
-    { field: "name" },
-    {
-      headerName: "sprites",
-      field: "sprites",
-      // valueGetter: (s: { front_default: any }) => s.front_default,
-      cellRenderer: PokeImageRenderer,
-      // cellRenderer: (props) => PokeImageRenderer,
-      // cellRenderer: props => {
-      //   // put the value in bold
-      //   return <>Value is <b>{params.value}</b></>;
-      // }
-    },
-  ]);
+  // Detect screen size
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-  const [_, setRowData] = useState<PokemonCompleteInfo[]>([]);
+  const columnDefs = useMemo<ColDef[]>(() => {
+    if (isMobile) {
+      return [
+        {
+          headerName: "",
+          flex: 1,
+          autoHeight: true,
+          cellRenderer: StackedPokemonRenderer,
+        },
+      ];
+    }
+    return [
+      { field: "id", flex: 1 },
+      { field: "name", flex: 1 },
+      {
+        headerName: "Image",
+        field: "sprites",
+        flex: 1,
+        cellRenderer: (props: { value: { front_default: string } }) => {
+          const { front_default } = props.value || {};
+          return (
+            front_default && (
+              <Image
+                src={front_default}
+                alt={`Poke Image`}
+                width={80}
+                height={80}
+                quality={20}
+              />
+            )
+          );
+        },
+      },
+    ];
+  }, [isMobile]);
 
   const defaultColDef = useMemo(() => {
     return {
       flex: 1,
       minWidth: 100,
+      resizable: !isMobile,
+      sortable: !isMobile,
     };
-  }, []);
+  }, [isMobile]);
 
   const myTheme = themeMaterial
     .withPart(iconSetMaterial)
     .withPart(colorSchemeDark)
     .withParams({
+      rowHeight: isMobile ? "auto" : "80px",
+      spacing: ".25rem",
       rowHoverColor: "rgba(187, 136, 255, 1)",
       backgroundColor: "transparent",
-      headerHeight: "5rem",
+      headerHeight: isMobile ? 0 : "5rem",
       headerTextColor: "white",
       headerBackgroundColor: "transparent",
       headerCellHoverBackgroundColor: "rgba(80, 40, 140, 0.66)",
       headerCellMovingBackgroundColor: "rgb(80, 40, 140)",
-      // pickerButtonBackgroundColor: "hsla(0, 0%, 12%, 1.00)",
       pickerListBackgroundColor: "hsla(0, 0%, 12%, 1.00)",
+      cellWidgetSpacing: "1rem",
     });
 
-  useEffect(() => {
-    document.documentElement.style.setProperty("--ag-spacing", `1rem`);
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading && data && data.length > 0) {
-      setRowData(data);
-    }
-  }, [isLoading, data]);
-
   return (
-    <>
-      <div className="flex flex-col h-full">
-        <AgGridReact
-          domLayout="autoHeight"
-          theme={myTheme}
-          rowData={data}
-          loading={isLoading}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          pagination={true}
-          paginationPageSize={10}
-          paginationPageSizeSelector={[5, 10, 20, 30, 50]}
-        ></AgGridReact>
-      </div>
-      {/* {data?.map((pokemon, index) => (
-            <div key={index} className="grid grid-flow-col grid-cols-3 gap-4">
-              <div>{pokemon.id}</div>
-              <div>{pokemon.name}</div>
-              <div>
-                {pokemon.sprites.front_default && (
-                  <Image
-                    src={pokemon.sprites.front_default}
-                    alt={pokemon.name}
-                    width={80}
-                    height={80}
-                    quality={20}
-                  />
-                )}
-              </div>
-            </div>
-          ))} */}
-    </>
+    <div className="flex flex-col h-full">
+      <AgGridReact
+        domLayout="autoHeight"
+        theme={myTheme}
+        rowData={data}
+        loading={isLoading}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+        pagination={!isMobile}
+        paginationPageSize={10}
+        paginationPageSizeSelector={[5, 10, 20, 30, 50]}
+      />
+    </div>
   );
 };

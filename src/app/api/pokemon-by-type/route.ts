@@ -1,6 +1,9 @@
 export const revalidate = 240; // Cache this route for 60 seconds
 
-import { TypeListPokemons } from "@/lib/features/pokemon/pokemon.model";
+import {
+  PokemonCompleteInfo,
+  TypeListPokemons,
+} from "@/lib/features/pokemon/pokemon.model";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 // import pLimit from "p-limit";
@@ -21,38 +24,26 @@ export async function GET(request: NextRequest) {
     next: { revalidate: 120 },
   }).then((r) => r.json());
 
-  const results = await Promise.all(
-    typeData.pokemon.map(async ({ pokemon }) => {
-      const detail = await fetch(`${baseUrl}pokemon/${pokemon.name}`, {
-        next: { revalidate: 120 },
-      }).then((r) => r.json());
-      return { ...detail, type };
-    })
-  );
+  const BATCH_SIZE = 5;
+  const results: PokemonCompleteInfo[] = [];
+  const pokemons = (typeData as TypeListPokemons).pokemon;
 
-  // const limit = pLimit(3); // only X requests at a time
+  for (let i = 0; i < pokemons.length; i += BATCH_SIZE) {
+    const batch = pokemons.slice(i, i + BATCH_SIZE);
 
-  // const typeData: TypeListPokemons = await fetch(`${baseUrl}type/${type}`).then(
-  //   (r) => r.json()
-  // );
+    const batchResults = await Promise.all(
+      batch.map(async ({ pokemon }) => {
+        const detail = await fetch(`${baseUrl}pokemon/${pokemon.name}`, {
+          next: { revalidate: 120 },
+        }).then((r) => r.json());
+        return { ...detail, type };
+      })
+    );
 
-  // const results = await Promise.all(
-  //   typeData.pokemon.map(({ pokemon }) =>
-  //     limit(async () => {
-  //       const detail = await fetch(`${baseUrl}pokemon/${pokemon.name}`).then(
-  //         (r) => r.json()
-  //       );
-  //       return { ...detail, type };
-  //     })
-  //   )
-  // );
+    results.push(...(batchResults.filter(Boolean) as PokemonCompleteInfo[]));
 
-  // console.log("results", results);
+    await new Promise((r) => setTimeout(r, 1));
+  }
 
-  // return NextResponse.json(results, {
-  //   headers: {
-  //     "Cache-Control": "public, max-age=60, stale-while-revalidate=120",
-  //   },
-  // });
   return NextResponse.json(results);
 }

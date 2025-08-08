@@ -40,25 +40,28 @@ export const pokemonApiSlice = createApi({
         const pokemons = (allPokemonsByTypeList.data as TypeListPokemons)
           .pokemon;
 
-        const allPokemonsByTypeCompleteList = await Promise.all(
-          pokemons.map(async ({ pokemon }) => {
-            const allPokemonInfoResult = await baseQuery(
-              `pokemon/${pokemon.name}`
-            );
-            if (allPokemonInfoResult.error) return null;
+        const BATCH_SIZE = 5;
+        const results: PokemonCompleteInfo[] = [];
 
-            const allPokemonInfo =
-              allPokemonInfoResult.data as PokemonCompleteInfo;
+        for (let i = 0; i < pokemons.length; i += BATCH_SIZE) {
+          const batch = pokemons.slice(i, i + BATCH_SIZE);
 
-            return { ...allPokemonInfo, type };
-          })
-        );
+          const batchResults = await Promise.all(
+            batch.map(async ({ pokemon }) => {
+              const res = await baseQuery(`pokemon/${pokemon.name}`);
+              if (res.error) return null;
+              return { ...(res.data as PokemonCompleteInfo), type };
+            })
+          );
 
-        return {
-          data: allPokemonsByTypeCompleteList.filter(
-            Boolean
-          ) as PokemonCompleteInfo[],
-        };
+          results.push(
+            ...(batchResults.filter(Boolean) as PokemonCompleteInfo[])
+          );
+
+          await new Promise((r) => setTimeout(r, 1));
+        }
+
+        return { data: results };
       },
       providesTags: (result) =>
         result
