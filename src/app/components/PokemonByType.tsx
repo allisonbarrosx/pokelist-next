@@ -105,7 +105,8 @@ export const PokemonByType = ({ type }: { type: string }) => {
       resizable: true,
       sortable: true,
     };
-  }, [isMobile]);
+    // }, [isMobile]);
+  }, []);
 
   const rowSelection = useMemo<RowSelectionOptions>(() => {
     return {
@@ -120,8 +121,10 @@ export const PokemonByType = ({ type }: { type: string }) => {
   ) => {
     // set info about pokemon into a storeSlice
     // setDisplayModal = true;
-    ev.data && dispatch(setPokemonInfo(ev.data));
-    dispatch(show());
+    if (ev.data) {
+      dispatch(setPokemonInfo(ev.data));
+      dispatch(show());
+    }
   };
 
   const myTheme = themeMaterial

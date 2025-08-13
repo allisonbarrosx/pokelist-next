@@ -1,11 +1,11 @@
 "use client";
 import { Dialog } from "@/app/components/Dialog";
 import { PokemonInfoDialog } from "@/app/components/PokemonInfoDialog";
-import { isShowDialog, show } from "@/lib/features/dialog/dialogSlice";
+import { isShowDialog } from "@/lib/features/dialog/dialogSlice";
 import { pokemonDetail } from "@/lib/features/pokemon/pokemonDetailsSlice";
 import Link from "next/link";
 import { use } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { PokemonByType } from "../../components/PokemonByType";
 
 interface Props {
@@ -14,7 +14,6 @@ interface Props {
 
 export default function TypesPage({ params }: Props) {
   const { type } = use(params);
-  const dispatch = useDispatch();
   const isDialogOpen = useSelector(isShowDialog);
   const pokeDetail = useSelector(pokemonDetail);
 

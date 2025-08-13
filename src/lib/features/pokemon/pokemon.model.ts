@@ -20,7 +20,7 @@ export type PokemonCompleteInfo = {
   abilities: { ability: { name: string } }[];
   weight: number;
   type: string;
-  species: any;
+  species: { name: string };
   height: number;
   id: number;
   name: string;
