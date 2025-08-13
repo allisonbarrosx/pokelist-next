@@ -98,7 +98,8 @@ export const PokemonByTypeSelfApi = ({ type }: { type: string }) => {
       resizable: true,
       sortable: true,
     };
-  }, [isMobile]);
+    // }, [isMobile]);
+  }, []);
 
   const myTheme = themeMaterial
     .withPart(iconSetMaterial)
