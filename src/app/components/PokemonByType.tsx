@@ -146,20 +146,30 @@ export const PokemonByType = ({ type }: { type: string }) => {
     });
 
   return (
-    <div className="flex flex-col h-full">
-      <AgGridReact
-        domLayout="autoHeight"
-        theme={myTheme}
-        rowData={data}
-        loading={isLoading}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[5, 10, 20, 30, 50]}
-        rowSelection={rowSelection}
-        onRowDoubleClicked={onRowDoubleClicked}
-      />
-    </div>
+    <>
+      <div className="flex flex-col w-full items-center justify-center p-2 bg-violet-950">
+        <span className="capitalize text-xl font-bold antialiased text-shadow-sm">
+          {type}
+        </span>
+        <span className="text-shadow-sm text-sm">
+          Double click to see pokémon info.
+        </span>
+      </div>
+      <div className="flex flex-col h-full">
+        <AgGridReact
+          domLayout="autoHeight"
+          theme={myTheme}
+          rowData={data}
+          loading={isLoading}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          pagination={true}
+          paginationPageSize={10}
+          paginationPageSizeSelector={[5, 10, 20, 30, 50]}
+          rowSelection={rowSelection}
+          onRowDoubleClicked={onRowDoubleClicked}
+        />
+      </div>
+    </>
   );
 };

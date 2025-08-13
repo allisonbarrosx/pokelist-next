@@ -2,13 +2,12 @@ import { hide } from "@/lib/features/dialog/dialogSlice";
 import { ReactNode, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-interface Dialog {
+interface DialogProps {
   show: boolean;
   children: ReactNode;
 }
 
-export const Dialog = ({ show = false, children }: Dialog) => {
-  const classControlDialog = show ? "" : "hidden";
+export const Dialog = ({ show = false, children }: DialogProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -19,27 +18,26 @@ export const Dialog = ({ show = false, children }: Dialog) => {
     }
   }, [show]);
 
+  if (!show) return null;
+
   return (
-    <>
-      {show && (
-        <div
-          className={`${classControlDialog} fixed z-50 w-full h-screen top-0 left-0 bg-black/50`}
-        >
-          <div className="relative h-screen flex justify-center items-center">
-            <div className="bg-zinc-900 w-180 shrink px-12 pt-12 pb-6 m-8 rounded-lg shadow-md">
-              {children}
-              <div className="mt-5 md:mt-10 flex justify-center">
-                <button
-                  className="rounded-md bg-violet-950 px-4 py-2 text-sm font-semibold text-white opacity-100 focus:outline-none hover:bg-red-700 hover:cursor-pointer"
-                  onClick={() => dispatch(hide())}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="bg-zinc-900 w-full max-w-[720px] max-h-[90vh] overflow-y-auto rounded-lg shadow-md flex flex-col">
+        <div className="p-6 flex-1">{children}</div>
+
+        <div className="sticky bottom-0 bg-zinc-900 p-4 border-t border-zinc-700 flex justify-center">
+          <button
+            className="rounded-md bg-violet-950 px-4 py-2 text-sm font-semibold text-white focus:outline-none hover:bg-red-700"
+            onClick={() => dispatch(hide())}
+          >
+            Close
+          </button>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };

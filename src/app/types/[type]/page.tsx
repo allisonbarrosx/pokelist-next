@@ -29,9 +29,6 @@ export default function TypesPage({ params }: Props) {
         >
           Home
         </Link>
-        <div className="w-full bg-blue-900 p-4 flex justify-center rounded-md text-shadow-sm">
-          Double click to see pokémon info.
-        </div>
         <div className="m-5">
           <PokemonByType type={type} />
         </div>
