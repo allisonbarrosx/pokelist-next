@@ -4,14 +4,19 @@ import { AgGridReact } from "ag-grid-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
+import { show } from "@/lib/features/dialog/dialogSlice";
+import { setPokemonInfo } from "@/lib/features/pokemon/pokemonDetailsSlice";
 import {
   AllCommunityModule,
   ColDef,
   colorSchemeDark,
   iconSetMaterial,
   ModuleRegistry,
+  RowDoubleClickedEvent,
+  RowSelectionOptions,
   themeMaterial,
 } from "ag-grid-community";
+import { useDispatch } from "react-redux";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -43,6 +48,8 @@ const StackedPokemonRenderer = (props: { data: PokemonCompleteInfo }) => {
 };
 
 export const PokemonByType = ({ type }: { type: string }) => {
+  const dispatch = useDispatch();
+
   const { data, isLoading } = useGetPokemonByTypeQuery(type);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -100,6 +107,23 @@ export const PokemonByType = ({ type }: { type: string }) => {
     };
   }, [isMobile]);
 
+  const rowSelection = useMemo<RowSelectionOptions>(() => {
+    return {
+      mode: "singleRow",
+      checkboxes: false,
+      enableClickSelection: true,
+    };
+  }, []);
+
+  const onRowDoubleClicked = (
+    ev: RowDoubleClickedEvent<PokemonCompleteInfo>
+  ) => {
+    // set info about pokemon into a storeSlice
+    // setDisplayModal = true;
+    ev.data && dispatch(setPokemonInfo(ev.data));
+    dispatch(show());
+  };
+
   const myTheme = themeMaterial
     .withPart(iconSetMaterial)
     .withPart(colorSchemeDark)
@@ -130,6 +154,8 @@ export const PokemonByType = ({ type }: { type: string }) => {
         pagination={true}
         paginationPageSize={10}
         paginationPageSizeSelector={[5, 10, 20, 30, 50]}
+        rowSelection={rowSelection}
+        onRowDoubleClicked={onRowDoubleClicked}
       />
     </div>
   );

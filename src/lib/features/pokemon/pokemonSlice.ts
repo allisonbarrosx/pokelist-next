@@ -15,7 +15,8 @@ export const pokemonApiSlice = createApi({
   endpoints: (builder) => ({
     // Supply the return type and the expected param type
     getPokemonTypes: builder.query<PokemonType[], void>({
-      query: () => "type", // baseApiUrl/type
+      query: () => ({ url: "type" }), // baseApiUrl/type
+      // query: () => "type", // baseApiUrl/type | other option
       // transform the response, since what comes from the API is not what we need to return
       transformResponse: (response: PokemonTypeResult) => response.results,
       // create tags according to the pokemon types name

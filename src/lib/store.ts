@@ -7,7 +7,11 @@ import {
 import { counterSlice } from "./features/counter/counterSlice";
 import { counterAsyncSlice } from "./features/counter/counterAsyncSlice";
 import { pokemonApiSlice } from "./features/pokemon/pokemonSlice";
-import { pokemonDetailsApiSlice } from "./features/pokemon/pokemonDetailsSlice";
+import {
+  pokemonDetailsApiSlice,
+  pokemonDetailsSlice,
+} from "./features/pokemon/pokemonDetailsSlice";
+import { dialogSlice } from "./features/dialog/dialogSlice";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -15,6 +19,8 @@ import { pokemonDetailsApiSlice } from "./features/pokemon/pokemonDetailsSlice";
 const rootReducer = combineSlices(
   counterSlice,
   counterAsyncSlice,
+  dialogSlice,
+  pokemonDetailsSlice,
   pokemonApiSlice,
   pokemonDetailsApiSlice
 );
