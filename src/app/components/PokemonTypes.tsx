@@ -14,7 +14,7 @@ export const PokemonTypes = () => {
           {data?.map((type, index) => (
             <div
               key={index}
-              className="p-5 md:p-10 bg-zinc-900/90 shadow-lg rounded-lg flex-1 flex flex-col justify-center w-auto md:w-100"
+              className="p-5 md:p-10 bg-zinc-900/90 shadow-md rounded-lg flex-1 flex flex-col justify-center w-auto md:w-100"
             >
               <p className="text-center mb-2 capitalize text-shadow-md">
                 {type.name}
