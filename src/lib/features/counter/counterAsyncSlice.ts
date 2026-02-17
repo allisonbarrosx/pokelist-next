@@ -1,4 +1,4 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../createAppSlice";
 import { CounterState } from "./counterSlice";
 import { AppThunk } from "@/lib/store";
@@ -22,7 +22,7 @@ export const counterAsyncSlice = createAppSlice({
     incrementByAmount: create.reducer(
       (state, action: PayloadAction<number>) => {
         state.value += action.payload;
-      }
+      },
     ),
     incrementAsync: create.asyncThunk(
       async () => {
@@ -40,7 +40,7 @@ export const counterAsyncSlice = createAppSlice({
         rejected: (state) => {
           state.status = "failed";
         },
-      }
+      },
     ),
     incrementByAmountAsync: create.asyncThunk(
       async (amount: number) => {
@@ -58,7 +58,7 @@ export const counterAsyncSlice = createAppSlice({
         rejected: (state) => {
           state.status = "failed";
         },
-      }
+      },
     ),
   }),
   selectors: {
@@ -86,6 +86,54 @@ export const incrementIfOdd =
       dispatch(incrementByAmount(amount));
     }
   };
+
+// Note: using Thunks, as in React Thunk, we are able to call other actions and wait statuses
+// to dispatch another action to handle a success or a failure in one go async.
+const thunkInitialState: { loading: boolean; data: []; error: null | string } =
+  {
+    loading: false,
+    data: [],
+    error: null,
+  };
+
+export const sliceForThunkExampleSlice = createSlice({
+  name: "thunkExample",
+  initialState: thunkInitialState,
+  reducers: (create) => ({
+    fetchPostsRequest: create.reducer((state) => {
+      state.loading = true;
+    }),
+    fetchPostsSuccess: create.reducer((state, action: PayloadAction<[]>) => {
+      state.data = action.payload;
+    }),
+    fetchPostsFailure: create.reducer(
+      (state, action: PayloadAction<string>) => {
+        state.error = action.payload;
+      },
+    ),
+  }),
+  selectors: {
+    selectData: (state) => state.data,
+  },
+});
+
+export const { fetchPostsRequest, fetchPostsSuccess, fetchPostsFailure } =
+  sliceForThunkExampleSlice.actions;
+export const { selectData } = sliceForThunkExampleSlice.selectors;
+
+export const randomApiCall = (): AppThunk => async (dispatch, getState) => {
+  dispatch(fetchPostsRequest()); // dispatch an action to flag the call to the api
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    if (!response.ok) {
+      throw new Error("Falha ao buscar posts");
+    }
+    const data = await response.json();
+    dispatch(fetchPostsSuccess(data)); // dipatch an action to flag success
+  } catch (error: any) {
+    dispatch(fetchPostsFailure(error.message)); // dispatch an action to flag a failure in the API call
+  }
+};
 
 /**
  * this is an example of managing the state without using any API calls

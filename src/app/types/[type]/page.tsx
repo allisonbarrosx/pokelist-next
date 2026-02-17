@@ -1,4 +1,4 @@
-"use client";
+"use client"; // while working with NextJS, using React hooks, this needs to be placed to work
 import { Dialog } from "@/app/components/Dialog";
 import { PokemonInfoDialog } from "@/app/components/PokemonInfoDialog";
 import { isShowDialog } from "@/lib/features/dialog/dialogSlice";

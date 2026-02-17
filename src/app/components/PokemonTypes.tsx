@@ -8,7 +8,7 @@ export const PokemonTypes = () => {
   return (
     <>
       {isLoading ? (
-        <p>Loaing...</p>
+        <p>Loading...</p>
       ) : (
         <div className="flex flex-wrap gap-4">
           {data?.map((type, index) => (
